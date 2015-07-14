@@ -14,7 +14,7 @@ npm install lang-rep-plugin --save-dev
 Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
 
 ```js
-grunt.loadNpmTasks('langRep-plugin');
+grunt.loadNpmTasks('lang-rep-plugin');
 ```
 
 ## The "langRep" task
