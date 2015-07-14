@@ -1,0 +1,13 @@
+{
+	"firstName": "jack",
+	"lastName": "maloney",
+	"family": {
+		"brother": "peter",
+		"mother": "jo",
+		"father": "tom"
+	},
+	"potatoes": {
+		"red": "a",
+		"blue": "b"
+	}
+}
