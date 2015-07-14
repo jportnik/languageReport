@@ -30,13 +30,14 @@ module.exports = (grunt) ->
       console.log "---------------------------------------"
 
     run = () ->
+      console.log "running..."
       languages = ["en", "fr", "es"]
       strFlattened = {}
       nullTranslations = []
 
 
       for language in languages
-        jsonObj = grunt.file.readJSON "/Users/jackmaloney/tasks/strings/" + language + ".json"
+        jsonObj = grunt.file.readJSON "./strings/" + language + ".json"
         #console.log jsonObj
         traverse jsonObj, "", (name, property) ->
           strFlattened[language] = {} if strFlattened[language] is undefined
