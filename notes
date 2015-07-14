@@ -1,1 +1,11 @@
-Here are some notes!
+priorities for translation/grunt plugin project:
+
+- make paths configurable from gruntfile
+- save into files
+- allow output into coffeescript
+- allow input of coffeescript
+- 3 options
+  - all languages in 1 file
+  - 1 file per language
+  - 1 file per language but all files zipped
+- verify master language file
