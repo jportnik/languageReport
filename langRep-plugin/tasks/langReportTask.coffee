@@ -25,9 +25,14 @@ module.exports = (grunt) ->
         expand obj, keys, i
 
     results = () ->
+      #print out result
       console.log "---------- nullTranslations -----------"
       console.log JSON.stringify langObj, null, 2
       console.log "---------------------------------------"
+
+      #save result in files
+      grunt.file.write "./temp/" + "nullTranslations" + ".json", JSON.stringify(langObj, null, 2)
+
 
     run = () ->
       console.log "running..."
