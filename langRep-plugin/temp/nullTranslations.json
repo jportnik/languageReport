@@ -1,0 +1,18 @@
+{
+  "es": {
+    "lastName": {},
+    "potatoes": {
+      "red": {},
+      "blue": {}
+    }
+  },
+  "fr": {
+    "family": {
+      "mother": {}
+    },
+    "potatoes": {
+      "red": {},
+      "blue": {}
+    }
+  }
+}
