@@ -21,16 +21,5 @@ grunt.loadNpmTasks('lang-rep-plugin');
 Basically useless for anyone except myself...
 
 ## Release History
-0.1.12 - this is getting rediculous<br>
-0.1.11 - work pls...<br>
-0.1.10 - package.json fix<br>
-0.1.9 - removed underscores, styling<br>
-0.1.8 - added underscores<br>
-0.1.7 - readMe fix, again, again<br>
-0.1.6 - readME fix, again<br>
-0.1.5 - readME fix<br>
-0.1.4 - we did it :)<br>
-0.1.3 - should work now?<br>
-0.1.2 - still messing around<br>
-0.1.1 - didn't save files 8)<br>
+0.1.14 - no longer path dependent
 0.1.0 - release
