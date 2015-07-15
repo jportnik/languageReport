@@ -21,5 +21,5 @@ grunt.loadNpmTasks('lang-rep-plugin');
 Basically useless for anyone except myself...
 
 ## Release History
-0.1.14 - no longer path dependent
+0.1.14 - no longer path dependent\n
 0.1.0 - release

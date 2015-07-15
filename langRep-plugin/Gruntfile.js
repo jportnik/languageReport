@@ -10,11 +10,19 @@
 
 module.exports = function(grunt) {
 
+  grunt.initConfig({
+  //Before generating any new files, remove any previously-created files.
+    clean: {
+      test: ["output"]
+    }
+  });
+
   // Actually load this plugin's task(s).
   grunt.loadTasks('tasks');
 
-  grunt.registerTask('default', function() {
-    console.log("Hey you should pick a task next time (-h for help)")
-  });
+  grunt.loadNpmTasks("grunt-contrib-clean");
 
+  grunt.registerTask('default', function() {
+    console.log("Hey you should pick a task next time (-h for help)");
+  });
 };
