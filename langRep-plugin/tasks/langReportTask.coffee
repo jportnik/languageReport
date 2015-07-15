@@ -1,13 +1,14 @@
 module.exports = (grunt) ->
   console.log "langRep has been loaded."
-  languages = ["en", "fr", "es"]
 
   grunt.registerTask "langRep", "language report task, used for comparing \"json language\" files", ->
+    languages = ["en", "fr", "es"]
+
     target = grunt.option "target"
     #console.log "target:" + target
 
     if target not in languages and target isnt "all"
-      grunt.log.error "langRep requires target to be on of [en, fr, es, all]"
+      grunt.log.error "langRep requires target to be on of [fr, es, all]\nex. grunt langRep --target=fr"
       #break out of the task and stop running
       return
 
@@ -34,24 +35,28 @@ module.exports = (grunt) ->
         expand obj, keys, i
 
     results = () ->
-      #print out result
-      console.log "---------- nullTranslations -----------"
-      console.log JSON.stringify langObj, null, 2
-      console.log "---------------------------------------"
+      # #print out result
+      # console.log "---------- nullTranslations -----------"
+      # console.log JSON.stringify langObj, null, 2
+      # console.log "---------------------------------------"
 
       #save result in files
       grunt.file.write "./temp/" + "nullTranslations" + ".json", JSON.stringify(langObj, null, 2)
 
-    run = () ->
+    run = (target) ->
       console.log "running..."
 
       strFlattened = {}
       nullTranslations = []
 
       for language in languages
-        jsonObj = grunt.file.readJSON "./strings/" + language + ".json"
-        #console.log jsonObj
-        traverse jsonObj, "", (name, property) ->
+        if language isnt target and language isnt "en" and target isnt "all"
+          #console.log "here:" + language
+          continue
+        #readInObj = grunt.file.read "./strings/" + language + "/str.coffee"
+        readInObj = require "../strings/" + language + "/str"
+        console.log language
+        traverse readInObj, "", (name, property) ->
           strFlattened[language] = {} if strFlattened[language] is undefined
           strFlattened[language][name] = property
 
@@ -60,7 +65,7 @@ module.exports = (grunt) ->
       for key of strFlattened["en"]
         #console.log key
         for language in languages
-          continue if language is "en" or language isnt target
+          continue if language is "en" or language isnt target and target isnt "all"
           nullTranslations.push language + key if strFlattened[language][key] is null or
             strFlattened[language][key] is undefined
 
@@ -68,6 +73,7 @@ module.exports = (grunt) ->
 
       for nullPath in nullTranslations
         parseDotNotation langObj, nullPath
-    run()
+
+    run(target)
 
     results()
