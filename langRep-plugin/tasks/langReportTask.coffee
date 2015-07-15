@@ -1,7 +1,16 @@
 module.exports = (grunt) ->
   console.log "langRep has been loaded."
+  languages = ["en", "fr", "es"]
 
   grunt.registerTask "langRep", "language report task, used for comparing \"json language\" files", ->
+    target = grunt.option "target"
+    #console.log "target:" + target
+
+    if target not in languages and target isnt "all"
+      grunt.log.error "langRep requires target to be on of [en, fr, es, all]"
+      #break out of the task and stop running
+      return
+
     langObj = {}
     traverse = (obj, path, callback) ->
       for property of obj
@@ -33,13 +42,11 @@ module.exports = (grunt) ->
       #save result in files
       grunt.file.write "./temp/" + "nullTranslations" + ".json", JSON.stringify(langObj, null, 2)
 
-
     run = () ->
       console.log "running..."
-      languages = ["en", "fr", "es"]
+
       strFlattened = {}
       nullTranslations = []
-
 
       for language in languages
         jsonObj = grunt.file.readJSON "./strings/" + language + ".json"
@@ -53,7 +60,7 @@ module.exports = (grunt) ->
       for key of strFlattened["en"]
         #console.log key
         for language in languages
-          continue if language is "en"
+          continue if language is "en" or language isnt target
           nullTranslations.push language + key if strFlattened[language][key] is null or
             strFlattened[language][key] is undefined
 
