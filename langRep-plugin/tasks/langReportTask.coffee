@@ -4,18 +4,17 @@ module.exports = (grunt) ->
   grunt.registerTask "langRep",
   "language report task, used for comparing coffeescipt language object files\n
   options:\n
-    file: specify file output type with [sin, sep, zip]\n
-      sin: single file creation\n
+    file: specify file output type with [sep, zip]\n
       sep: seperate file creation\n
       zip: seperate and zipped", ->
     languages = ["en", "fr", "es", "it", "pt", "ru", "te", "zh"]
     options = ["sin", "sep", "zip"]
 
     option = grunt.option "file"
-    #console.log "option:" + option
+    console.log "option:" + option
 
     if option not in options and option isnt undefined
-      grunt.log.error "langRep --file=<option> where <option> is one of [sin, sep, zip]"
+      grunt.log.error "grunt langRep --file=<option> where <option> is one of [sin, zip]"
       #break out of the task and stop running
       return
 
@@ -41,16 +40,23 @@ module.exports = (grunt) ->
         i++
         expand obj, keys, i
 
-    results = () ->
+    results = (option) ->
       # #print out result
       # console.log "---------- nullTranslations -----------"
       # console.log JSON.stringify langObj, null, 2
       # console.log "---------------------------------------"
 
       #save result in files
-      grunt.file.write "./temp/nullTranslations.json", JSON.stringify(langObj, null, 2)
+      if option is "sep" or option is "zip"
+        #create seperate files
+        for language of langObj
+          grunt.file.write "./output/seperate/" + language + "_nullTranslations.json", JSON.stringify(langObj[language], null, 2)
+        if option is "zip"
+          console.log "zip needs to be implemented"
+      else
+        grunt.file.write "./output/combined_nullTranslations.json", JSON.stringify(langObj, null, 2)
 
-    run = (option) ->
+    run = () ->
       console.log "running..."
 
       strFlattened = {}
@@ -77,6 +83,6 @@ module.exports = (grunt) ->
       for nullPath in nullTranslations
         parseDotNotation langObj, nullPath
 
-    run(option)
+    run()
 
-    results()
+    results(option)
