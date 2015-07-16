@@ -13,7 +13,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
   //Before generating any new files, remove any previously-created files.
     clean: {
-      test: ["output"]
+      clean: ["output"]
     }
   });
 
