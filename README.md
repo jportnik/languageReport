@@ -19,5 +19,5 @@ grunt.loadNpmTasks('lang-rep-plugin');
 
 ## The "langRep" task
 ```shell
-grunt lang-rep -<options> where options can be sep or zip
+grunt langRep -<options> where options can be sep or zip
 ```
