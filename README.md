@@ -23,5 +23,6 @@ grunt langRep -<options> where options can be sep or zip
 ```
 
 ## Release History
-0.2.0 - added output options and clean task
+0.2.2 - name change to match the task\n
+0.2.0 - added output options and clean task\n
 0.1.0 - release
