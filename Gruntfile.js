@@ -13,16 +13,17 @@ module.exports = function(grunt) {
   grunt.initConfig({
   //Before generating any new files, remove any previously-created files.
     clean: {
-      clean: ["output"]
+      cleaner: ['output']
     }
   });
 
   //Load tasks folder
   grunt.loadTasks('tasks');
 
-  grunt.loadNpmTasks("grunt-contrib-clean");
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
+  grunt.registerTask('cleaner', ['clean']);
   grunt.registerTask('default', function() {
-    console.log("Hey you should pick a task next time (-h for help)");
+    console.log('Hey you should pick a task next time (-h for help)');
   });
 };
