@@ -1,5 +1,5 @@
 /*
- * langRep-plugin
+ * lang-rep
  * https://github.com/root/jackmaloney
  *
  * Copyright (c) 2015 Jack Maloney
