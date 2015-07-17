@@ -72,7 +72,7 @@ module.exports = (grunt) ->
 
       else
         sourceCode = convertToCoffee langObj
-        grunt.file.write 'output/coffee/combined_nullTranslations.coffee', sourceCode
+        grunt.file.write 'output/combined_nullTranslations.coffee', sourceCode
 
     run = () ->
       console.log 'running...'
