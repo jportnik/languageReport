@@ -98,3 +98,20 @@ module.exports = (grunt) ->
     run()
 
     results(doZip,doSep)
+
+    grunt.registerTask 'dead',
+    'dead task, used for bringing up dead string candidates', ->
+      try
+        enObj = require 'node_modules/lang-rep/strings/en/str.coffee'
+      catch e
+        grunt.log.error 'The desired file is missing...rip'
+
+      traverse = (obj) ->
+        for property in obj
+          if obj[property] is undefined
+            console.log "#{property}"
+          else if obj[property] is 'object'
+            traverse obj[property]
+          else
+
+      traverse enObj

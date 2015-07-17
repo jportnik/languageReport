@@ -11,8 +11,4 @@
 module.exports = function(grunt) {
   //Load tasks folder
   grunt.loadTasks('tasks');
-
-  grunt.registerTask('default', function() {
-    console.log('Hey you should pick a task next time (-h for help)');
-  });
 };
