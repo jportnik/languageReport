@@ -38,7 +38,6 @@ module.exports = (grunt) ->
     convertToCoffee = (obj) ->
       js2coffee = require 'js2coffee'
       source = 'modeule.exports = ' + JSON.stringify(obj, null, 2) + ';'
-      #console.log source
       result = js2coffee.build source
 
       #replaceAll
@@ -58,18 +57,17 @@ module.exports = (grunt) ->
         zip = new JSZip
         #create seperate files
         for language of langObj
-          #grunt.file.write 'output/seperate/' + language + '_nullTranslations', JSON.stringify(langObj[language], null, 2)
-
           sourceCode = convertToCoffee langObj[language]
-          if doZip
-            zip.file "#{language}_nullTranslations.coffee", sourceCode
+          if doSep
+            grunt.file.write "output/seperate/#{language}_nullTranslations.coffee", sourceCode
           else
-            grunt.file.write "output/coffee/seperate/#{language}_nullTranslations.coffee", sourceCode
+            zip.file "#{language}_nullTranslations.coffee", sourceCode
 
         #create the zip file
         if doZip
           console.log 'generating zip file'
-          content = zip.generate {compressionOptions: {level:6}}
+          #compression level: 1-9
+          content = zip.generate {type:'nodeBuffer', compressionOptions: {level: 9}}
           grunt.file.write 'output/nullTranslations.zip', content
 
       else
@@ -84,13 +82,11 @@ module.exports = (grunt) ->
 
       for language in languages
         readInObj = require "../strings/#{language}/str"
-        #console.log language
         traverse readInObj, '', (name, property) ->
           strFlattened[language] = {} if strFlattened[language] is undefined
           strFlattened[language][name] = property
 
       for key of strFlattened['en']
-        #console.log key
         for language in languages
           continue if language is 'en'
           nullTranslations.push language + key if strFlattened[language][key] is null or
