@@ -1,7 +1,7 @@
 {
   "name": "lang-rep",
   "description": "Language report plugin",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "homepage": "https://github.com/root/jackmaloney",
   "author": {
     "name": "Jack Maloney",
