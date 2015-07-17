@@ -1,4 +1,4 @@
-# langRep-plugin
+# lang-rep
 
 > Language report plugin
 
@@ -14,7 +14,7 @@ npm install lang-rep-plugin --save-dev
 Once the plugin has been installed, it may be enabled inside your Gruntfile with this line of JavaScript:
 
 ```js
-grunt.loadNpmTasks('lang-rep-plugin');
+grunt.loadNpmTasks('lang-rep');
 ```
 
 ## The "langRep" task
@@ -23,5 +23,6 @@ grunt langRep -<options> where options can be sep or zip
 ```
 
 ## Release History
-0.2.0 - added output options and clean task
+0.3.0 - fully functional\n
+0.2.0 - added output options and clean task\n
 0.1.0 - release

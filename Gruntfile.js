@@ -17,7 +17,7 @@ module.exports = function(grunt) {
     }
   });
 
-  // Actually load this plugin's task(s).
+  //Load tasks folder
   grunt.loadTasks('tasks');
 
   grunt.loadNpmTasks("grunt-contrib-clean");
