@@ -24,5 +24,5 @@ grunt langRep -<options> where options can be sep or zip
 
 ## Release History
 0.3.0 - fully functional\n
-0.2.0 - added output options and clean task\n
+0.2.0 - added output options\n
 0.1.0 - release
