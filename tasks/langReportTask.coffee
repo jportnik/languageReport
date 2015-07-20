@@ -4,8 +4,9 @@ module.exports = (grunt) ->
   grunt.registerTask 'langRep',
   'language report task, used for comparing coffeescipt language object files\n
   options:\n
-    -sep will seperate the files\n
-    -zip will seperate and zip the files', ->
+    sep will seperate the files\n
+    zip will seperate and zip the files\n
+    dead will create a dead strings file', ->
     languages = ['en', 'fr', 'es', 'it', 'pt', 'ru', 'te', 'zh']
 
     #valid options
@@ -107,12 +108,14 @@ module.exports = (grunt) ->
       catch e
         grunt.log.warning 'The desired file is missing'
 
-      traverse = (obj) ->
+      output = ''
+      dead = (obj) ->
         for property of obj
           if obj[property] is undefined or obj[property] is ''
-            console.log "#{property}"
+            output = output + "#{property}\n"
           else if typeof obj[property] is 'object'
-            traverse obj[property]
+            dead obj[property]
           else
 
-      traverse enObj
+      dead enObj
+      grunt.file.write 'output/dead.txt', output
