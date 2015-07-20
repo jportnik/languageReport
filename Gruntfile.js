@@ -9,6 +9,15 @@
 'use strict';
 
 module.exports = function(grunt) {
+  //configuration options
+  grunt.initConfig({
+    langRep: {
+        sep: true,
+        zip: false,
+        dead: true
+    }
+  });
+
   //Load tasks folder
   grunt.loadTasks('tasks');
 };

@@ -9,8 +9,9 @@ module.exports = (grunt) ->
     languages = ['en', 'fr', 'es', 'it', 'pt', 'ru', 'te', 'zh']
 
     #valid options
-    doZip = grunt.option 'zip'
-    doSep = grunt.option 'sep'
+    doSep = grunt.config ['langRep', 'sep']
+    doZip = grunt.config ['langRep', 'zip']
+    doDead = grunt.config ['langRep', 'dead']
 
     langObj = {}
     traverse = (obj, path, callback) ->
@@ -99,18 +100,18 @@ module.exports = (grunt) ->
 
     results(doZip,doSep)
 
-    grunt.registerTask 'dead',
-    'dead task, used for bringing up dead string candidates', ->
+    if doDead
+      console.log 'generating dead strings file'
       try
-        enObj = require 'node_modules/lang-rep/strings/en/str.coffee'
+        enObj = require '../strings/en/str'
       catch e
-        grunt.log.error 'The desired file is missing...rip'
+        grunt.log.warning 'The desired file is missing'
 
       traverse = (obj) ->
-        for property in obj
-          if obj[property] is undefined
+        for property of obj
+          if obj[property] is undefined or obj[property] is ''
             console.log "#{property}"
-          else if obj[property] is 'object'
+          else if typeof obj[property] is 'object'
             traverse obj[property]
           else
 
