@@ -22,6 +22,11 @@ grunt.loadNpmTasks('lang-rep');
 grunt langRep -<options> where options can be sep or zip
 ```
 
+## The "verify" task
+```shell
+grunt verify
+```
+
 ## Release History
 0.3.0 - fully functional\n
 0.2.0 - added output options\n

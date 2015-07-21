@@ -7,12 +7,15 @@ module.exports = (grunt) ->
     sep will seperate the files\n
     zip will seperate and zip the files\n
     dead will create a dead strings file', ->
-    languages = ['en', 'fr', 'es', 'it', 'pt', 'ru', 'te', 'zh']
 
     #valid options
-    doSep = grunt.config ['langRep', 'sep']
-    doZip = grunt.config ['langRep', 'zip']
-    doDead = grunt.config ['langRep', 'dead']
+    doSep = grunt.option 'sep'
+    doZip = grunt.option 'zip'
+
+    #config object
+    config = grunt.config 'langRep'
+
+    languages = config.langs
 
     langObj = {}
     traverse = (obj, path, callback) ->
@@ -61,7 +64,7 @@ module.exports = (grunt) ->
         for language of langObj
           sourceCode = convertToCoffee langObj[language]
           if doSep
-            grunt.file.write "output/seperate/#{language}_nullTranslations.coffee", sourceCode
+            grunt.file.write "#{config.cwd}seperate/#{language}_nullTranslations.coffee", sourceCode
           else
             zip.file "#{language}_nullTranslations.coffee", sourceCode
 
@@ -70,11 +73,11 @@ module.exports = (grunt) ->
           console.log 'generating zip file'
           #compression level: 1-9
           content = zip.generate {type:'nodeBuffer', compressionOptions: {level: 9}}
-          grunt.file.write 'output/nullTranslations.zip', content
+          grunt.file.write "#{config.cwd}#{config.dest}nullTranslations.zip", content
 
       else
         sourceCode = convertToCoffee langObj
-        grunt.file.write 'output/combined_nullTranslations.coffee', sourceCode
+        grunt.file.write "#{config.cwd}#{config.dest}combined_nullTranslations.coffee", sourceCode
 
     run = () ->
       console.log 'running...'
@@ -83,14 +86,16 @@ module.exports = (grunt) ->
       nullTranslations = []
 
       for language in languages
-        readInObj = require "../strings/#{language}/str"
+
+        #readInObj = require "#{config.cwd}#{config.src}"
+        readInObj = require config.src + "/#{language}/str.coffee"
         traverse readInObj, '', (name, property) ->
           strFlattened[language] = {} if strFlattened[language] is undefined
           strFlattened[language][name] = property
 
       for key of strFlattened['en']
         for language in languages
-          continue if language is 'en'
+          continue if language is config.master
           nullTranslations.push language + key if strFlattened[language][key] is null or
             strFlattened[language][key] is undefined
 
@@ -100,22 +105,3 @@ module.exports = (grunt) ->
     run()
 
     results(doZip,doSep)
-
-    if doDead
-      console.log 'generating dead strings file'
-      try
-        enObj = require '../strings/en/str'
-      catch e
-        grunt.log.warning 'The desired file is missing'
-
-      output = ''
-      dead = (obj) ->
-        for property of obj
-          if obj[property] is undefined or obj[property] is ''
-            output = output + "#{property}\n"
-          else if typeof obj[property] is 'object'
-            dead obj[property]
-          else
-
-      dead enObj
-      grunt.file.write 'output/dead.txt', output

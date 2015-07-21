@@ -9,12 +9,19 @@
 'use strict';
 
 module.exports = function(grunt) {
-  //configuration options
+
   grunt.initConfig({
     langRep: {
-        sep: true,
-        zip: false,
-        dead: true
+      cwd: './',
+      dest: 'output/',
+      src: '../testStrings',
+      langs: ['en', 'fr', 'es', 'it', 'pt', 'ru', 'te', 'zh'],
+      master: 'en'
+    },
+    verify: {
+      src: '../testStrings/en/str.coffee',
+      dest: 'output/',
+      path: 'tasks'
     }
   });
 
