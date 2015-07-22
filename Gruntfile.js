@@ -14,14 +14,13 @@ module.exports = function(grunt) {
     langRep: {
       cwd: './',
       dest: 'output/',
-      src: '../testStrings',
+      src: '../../testStrings',
       langs: ['en', 'fr', 'es', 'it', 'pt', 'ru', 'te', 'zh'],
       master: 'en'
     },
     verify: {
-      src: '../testStrings/en/str.coffee',
-      dest: 'output/',
-      path: 'tasks'
+      master: '../../testStrings/en/str.coffee',
+      dest: 'output/'
     }
   });
 

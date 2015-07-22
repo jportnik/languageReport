@@ -1,8 +1,7 @@
 {
   "name": "lang-rep",
   "description": "Language report plugin",
-  "version": "0.3.11",
-  "homepage": "https://github.com/root/jackmaloney",
+  "version": "0.3.12",
   "author": {
     "name": "Jack Maloney",
     "email": "jmaloney@axonify.com"
@@ -30,9 +29,6 @@
     "grunt": "~0.4.5",
     "js2coffee": "~2.1.0",
     "jszip": "~2.5.0"
-  },
-  "peerDependencies": {
-    "grunt": "~0.4.5"
   },
   "keywords": [
     "gruntplugin"

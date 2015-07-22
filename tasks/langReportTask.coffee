@@ -5,8 +5,7 @@ module.exports = (grunt) ->
   'language report task, used for comparing coffeescipt language object files\n
   options:\n
     sep will seperate the files\n
-    zip will seperate and zip the files\n
-    dead will create a dead strings file', ->
+    zip will seperate and zip the files', ->
 
     #valid options
     doSep = grunt.option 'sep'
@@ -88,12 +87,16 @@ module.exports = (grunt) ->
       for language in languages
 
         #readInObj = require "#{config.cwd}#{config.src}"
-        readInObj = require config.src + "/#{language}/str.coffee"
+        try
+          readInObj = require config.src + "#{config.cwd}#{language}/str.coffee"
+        catch e
+          console.error grunt.warn "Oops, could not find your #{language} object file, check the path again."
+
         traverse readInObj, '', (name, property) ->
           strFlattened[language] = {} if strFlattened[language] is undefined
           strFlattened[language][name] = property
 
-      for key of strFlattened['en']
+      for key of strFlattened[config.master]
         for language in languages
           continue if language is config.master
           nullTranslations.push language + key if strFlattened[language][key] is null or
