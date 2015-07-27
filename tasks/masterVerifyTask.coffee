@@ -1,16 +1,15 @@
 module.exports = (grunt) ->
   console.log 'masterVerifyTask has been loaded.'
 
-  grunt.registerTask 'verify', 'finds potential unused strings', ->
+  grunt.registerMultiTask 'verify', 'finds potential unused strings', ->
     #config object
     config = grunt.config 'verify'
+    CSON = require 'cson'
+    mastObj = CSON.requireCSFile @data.master
 
-    console.log 'generating dead strings file'
-
-    try
-      mastObj = require config.master
-    catch e
-      grunt.warn 'Oops, could not find your master object file, check the path again.'
+    grepArr = ['-r', '-m 1', null, @data.dirToSearch]
+    for ex in @data.exclude
+      grepArr.push "--exclude-dir=#{ex}"
 
     toCheck = []
     potentialDead = []
@@ -21,14 +20,13 @@ module.exports = (grunt) ->
         if typeof obj[property] isnt 'object' or obj[property] is null or obj[property] is undefined
           toCheck.push property
           #console.log "looking for: #{property}"
-          grep = sync.spawnSync 'git', ['grep', '-F', property]
-          #console.log grep.output.toString 'utf8'
-          #console.log grep.status
+          grepArr[2] = property
+          grep = sync.spawnSync 'grep', grepArr
           potentialDead.push property if grep.status
         else if typeof obj[property] is 'object'
           traverse obj[property], sync
         else
 
-    traverse mastObj, sync
+    traverse mastObj, sync, ''
 
     console.log potentialDead

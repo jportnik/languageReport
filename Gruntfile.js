@@ -12,15 +12,23 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     langRep: {
-      cwd: './',
-      dest: 'output/',
-      src: '../../testStrings',
-      langs: ['en', 'fr', 'es', 'it', 'pt', 'ru', 'te', 'zh'],
-      master: 'en'
+      lang: {
+        files: [{
+          expand: true,
+          cwd: 'client/assets/strings',
+          dest: 'tempDir/',
+          src: '**/str.coffee'
+        }],
+        langs: ['en', 'fr', 'es', 'it', 'pt', 'ru', 'te', 'zh'],
+        master: 'en'
+      }
     },
     verify: {
-      master: '../../testStrings/en/str.coffee',
-      dest: 'output/'
+      verf: {
+        master: 'client/assets/strings/en/str.coffee',
+        exclude: ['strings', '.git', 'node_modules'],
+        dirToSearch: 'client/'
+      }
     }
   });
 

@@ -1,7 +1,7 @@
 module.exports = (grunt) ->
   console.log 'langRep has been loaded.'
 
-  grunt.registerTask 'langRep',
+  grunt.registerMultiTask 'langRep',
   'language report task, used for comparing coffeescipt language object files\n
   options:\n
     sep will seperate the files\n
@@ -14,9 +14,19 @@ module.exports = (grunt) ->
     #config object
     config = grunt.config 'langRep'
 
-    languages = config.langs
+    languages = @data.langs
+    filesObj = {}
+    CSON = require 'cson'
+
+    @files.forEach (file) ->
+      for language in languages
+        if ~(file.src[0]).indexOf "/#{language}/"
+          filesObj[language] = CSON.requireCSFile file.src[0]
+          break
 
     langObj = {}
+    toObj = (file, cur, obj) ->
+
     traverse = (obj, path, callback) ->
       for property of obj
         if typeof obj[property] is 'object' and obj[property] isnt null
@@ -38,18 +48,7 @@ module.exports = (grunt) ->
         i++
         expand obj, keys, i
 
-    #returns the coffescript stringified
-    convertToCoffee = (obj) ->
-      js2coffee = require 'js2coffee'
-      source = 'modeule.exports = ' + JSON.stringify(obj, null, 2) + ';'
-      result = js2coffee.build source
-
-      #replaceAll
-      regex = new RegExp '\'', 'g'
-      result.code  = result.code.replace regex, ' '
-      return result.code
-
-    results = (doZip, doSep) ->
+    results = (doZip, doSep, dest) ->
       # #print out result
       # console.log '---------- nullTranslations -----------'
       # console.log JSON.stringify langObj, null, 2
@@ -58,12 +57,14 @@ module.exports = (grunt) ->
       #save result in files
       if doZip or doSep
         JSZip = require 'jszip'
+
         zip = new JSZip
         #create seperate files
         for language of langObj
-          sourceCode = convertToCoffee langObj[language]
+          sourceCode = 'module.exports =\n' + CSON.stringify langObj[language]
+          #sourceCode = 'module.exports = \n' + langObj[language]
           if doSep
-            grunt.file.write "#{config.cwd}seperate/#{language}_nullTranslations.coffee", sourceCode
+            grunt.file.write "#{dest}seperate/#{language}_nullTranslations.coffee", sourceCode
           else
             zip.file "#{language}_nullTranslations.coffee", sourceCode
 
@@ -72,31 +73,25 @@ module.exports = (grunt) ->
           console.log 'generating zip file'
           #compression level: 1-9
           content = zip.generate {type:'nodeBuffer', compressionOptions: {level: 9}}
-          grunt.file.write "#{config.cwd}#{config.dest}nullTranslations.zip", content
+          grunt.file.write "#{dest}nullTranslations.zip", content
 
       else
-        sourceCode = convertToCoffee langObj
-        grunt.file.write "#{config.cwd}#{config.dest}combined_nullTranslations.coffee", sourceCode
+        sourceCode = 'module.exports =\n' + CSON.stringify langObj[language]
+        grunt.file.write "#{dest}combined_nullTranslations.coffee", sourceCode
 
-    run = () ->
+    run = (master) ->
       console.log 'running...'
 
       strFlattened = {}
       nullTranslations = []
 
       for language in languages
-
-        #readInObj = require "#{config.cwd}#{config.src}"
-        try
-          readInObj = require config.src + "#{config.cwd}#{language}/str.coffee"
-        catch e
-          console.error grunt.warn "Oops, could not find your #{language} object file, check the path again."
-
-        traverse readInObj, '', (name, property) ->
+        console.log "#{language} checked"
+        traverse filesObj[language] , '', (name, property) ->
           strFlattened[language] = {} if strFlattened[language] is undefined
           strFlattened[language][name] = property
 
-      for key of strFlattened[config.master]
+      for key of strFlattened[master]
         for language in languages
           continue if language is config.master
           nullTranslations.push language + key if strFlattened[language][key] is null or
@@ -105,6 +100,6 @@ module.exports = (grunt) ->
       for nullPath in nullTranslations
         parseDotNotation langObj, nullPath
 
-    run()
+    run(@data.master)
 
-    results(doZip,doSep)
+    results(doZip, doSep, @files[0].orig.dest)

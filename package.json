@@ -1,7 +1,7 @@
 {
   "name": "lang-rep",
   "description": "Language report plugin",
-  "version": "0.3.12",
+  "version": "0.4.0",
   "author": {
     "name": "Jack Maloney",
     "email": "jmaloney@axonify.com"
@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "grunt": "~0.4.5",
-    "js2coffee": "~2.1.0",
+    "cson": "~3.0.1",
     "jszip": "~2.5.0"
   },
   "keywords": [
