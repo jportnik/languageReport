@@ -16,16 +16,22 @@ module.exports = (grunt) ->
 
     languages = @data.langs
     filesObj = {}
+    langObj = {}
+
     CSON = require 'cson'
 
+    i = 0
     @files.forEach (file) ->
+      i++
       for language in languages
         if ~(file.src[0]).indexOf "/#{language}/"
           filesObj[language] = CSON.requireCSFile file.src[0]
           break
 
-    langObj = {}
-    toObj = (file, cur, obj) ->
+    if not i
+      grunt.fail.fatal "0 files found."
+    else
+      console.log "#{i} file(s) found."
 
     traverse = (obj, path, callback) ->
       for property of obj
@@ -62,7 +68,6 @@ module.exports = (grunt) ->
         #create seperate files
         for language of langObj
           sourceCode = 'module.exports =\n' + CSON.stringify langObj[language]
-          #sourceCode = 'module.exports = \n' + langObj[language]
           if doSep
             grunt.file.write "#{dest}seperate/#{language}_nullTranslations.coffee", sourceCode
           else
@@ -76,7 +81,7 @@ module.exports = (grunt) ->
           grunt.file.write "#{dest}nullTranslations.zip", content
 
       else
-        sourceCode = 'module.exports =\n' + CSON.stringify langObj[language]
+        sourceCode = 'module.exports =\n' + CSON.stringify langObj
         grunt.file.write "#{dest}combined_nullTranslations.coffee", sourceCode
 
     run = (master) ->

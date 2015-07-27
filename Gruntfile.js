@@ -16,7 +16,7 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: 'client/assets/strings',
-          dest: 'tempDir/',
+          dest: 'tmpDir/',
           src: '**/str.coffee'
         }],
         langs: ['en', 'fr', 'es', 'it', 'pt', 'ru', 'te', 'zh'],
