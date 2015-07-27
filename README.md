@@ -24,7 +24,7 @@ grunt langRep -<options> where options can be sep or zip
 
 ## The "verify" task
 ```shell
-grunt verify
+grunt verify used for checking a directory for keys of an object, to see if they are in use
 ```
 
 ## Release History
