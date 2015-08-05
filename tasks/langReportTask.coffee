@@ -2,23 +2,18 @@ module.exports = (grunt) ->
   console.log 'langRep has been loaded.'
 
   grunt.registerMultiTask 'langRep',
-  'language report task, used for comparing coffeescipt language object files\n
-  options:\n
-    sep will seperate the files\n
-    zip will seperate and zip the files', ->
+  'language report task, used for comparing coffeescipt language object files\noptions:\n\tsep will seperate the files\n\tzip will seperate and zip the files', ->
+
+    CSON = require 'cson'
 
     #valid options
     doSep = grunt.option 'sep'
     doZip = grunt.option 'zip'
 
-    #config object
-    config = grunt.config 'langRep'
-
     languages = @data.langs
+    master = @data.master
     filesObj = {}
     langObj = {}
-
-    CSON = require 'cson'
 
     i = 0
     @files.forEach (file) ->
@@ -84,11 +79,10 @@ module.exports = (grunt) ->
         sourceCode = 'module.exports =\n' + CSON.stringify langObj
         grunt.file.write "#{dest}combined_nullTranslations.coffee", sourceCode
 
-    run = (master) ->
+    run = () ->
       console.log 'running...'
 
       strFlattened = {}
-      nullTranslations = []
 
       for language in languages
         console.log "#{language} checked"
@@ -98,13 +92,10 @@ module.exports = (grunt) ->
 
       for key of strFlattened[master]
         for language in languages
-          continue if language is config.master
-          nullTranslations.push language + key if strFlattened[language][key] is null or
+          continue if language is master
+          parseDotNotation langObj, language + key if strFlattened[language][key] is null or
             strFlattened[language][key] is undefined
 
-      for nullPath in nullTranslations
-        parseDotNotation langObj, nullPath
-
-    run(@data.master)
+    run()
 
     results(doZip, doSep, @files[0].orig.dest)
