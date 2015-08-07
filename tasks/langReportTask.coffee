@@ -1,6 +1,4 @@
 module.exports = (grunt) ->
-  console.log 'langRep has been loaded.'
-
   grunt.registerMultiTask 'langRep',
   'language report task, used for comparing coffeescipt language object files\noptions:\n\tsep will seperate the files\n\tzip will seperate and zip the files', ->
 
@@ -93,8 +91,7 @@ module.exports = (grunt) ->
       for key of strFlattened[master]
         for language in languages
           continue if language is master
-          parseDotNotation langObj, language + key if strFlattened[language][key] is null or
-            strFlattened[language][key] is undefined
+          parseDotNotation langObj, language + key if not strFlattened[language][key]?
 
     run()
 

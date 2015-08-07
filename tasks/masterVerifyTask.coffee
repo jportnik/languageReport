@@ -1,31 +1,45 @@
 module.exports = (grunt) ->
-  console.log 'masterVerifyTask has been loaded.'
-
   #will create duplicates in the output if you have two keys with the same name
   grunt.registerMultiTask 'verify', 'finds potential unused strings', ->
+    start = Date.now()
 
     CSON = require 'cson'
     sync = require 'child_process'
 
     mastObj = CSON.requireCSFile @data.master
+    include = @data.include
+    exclude = @data.exclude
+    toSearch = @data.toSearch
 
-    #creates the grep command with excluded directories
-    grepArr = ['-r', '-m 1', null, @data.dirToSearch]
-    for ex in @data.exclude
-      grepArr.push "--exclude-dir=#{ex}"
+    grepArr = ['-r', null, toSearch]
+
+    for inc in include
+      grepArr.push "--include=#{inc}"
+
+    for exc in exclude
+      grepArr.push "--exclude=#{exc}"
 
     potentialDead = []
 
-    traverse = (obj) ->
+    traverse = (obj, soFar) ->
       for property of obj
-        if typeof obj[property] isnt 'object' or obj[property] is null or obj[property] is undefined
-          # console.log "looking for: #{property}"
-          grepArr[2] = property
+        flat = null
+        if soFar is ''
+          flat = property
+        else
+          flat = "#{soFar}.#{property}"
+        if typeof obj[property] isnt 'object' or not obj[property]?
+          # console.log "looking for: flat"
+          grepArr[1] = flat
           grep = sync.spawnSync 'grep', grepArr
-          potentialDead.push property if grep.status
+          switch grep.status
+            when 1 then potentialDead.push flat
+            when 2 then console.log 'an error occured with grep'
+            else
         else if typeof obj[property] is 'object'
-          traverse obj[property]
+          traverse obj[property], flat
 
-    traverse mastObj
+    traverse mastObj, ''
 
     console.log potentialDead
+    console.log 'time: ' + (Date.now() - start)

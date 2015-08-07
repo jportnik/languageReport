@@ -13,8 +13,17 @@ module.exports = (grunt) ->
     verify:
       verf:
         master: 'client/assets/strings/en/str.coffee'
-        exclude: ['strings', '.git', 'node_modules']
-        dirToSearch: 'client/'
+        toSearch:
+          'client/'
+        include: [
+          'client/**/*.coffee'
+          'client/**/*.html'
+        ]
+        exclude: [
+          'client/assets/**'
+          'client/config/**'
+          'client/vendor/** '
+        ]
 
   #Load tasks folder
   grunt.loadTasks 'tasks'
