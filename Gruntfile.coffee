@@ -13,8 +13,6 @@ module.exports = (grunt) ->
     verify:
       verf:
         master: 'client/assets/strings/en/str.coffee'
-        toSearch:
-          'client/'
         include: [
           'client/**/*.coffee'
           'client/**/*.html'

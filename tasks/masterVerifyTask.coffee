@@ -1,5 +1,4 @@
 module.exports = (grunt) ->
-  #will create duplicates in the output if you have two keys with the same name
   grunt.registerMultiTask 'verify', 'finds potential unused strings', ->
     start = Date.now()
 
@@ -11,13 +10,13 @@ module.exports = (grunt) ->
     exclude = @data.exclude
     toSearch = @data.toSearch
 
-    grepArr = ['-r', null, toSearch]
+    grepArr = ['-r', null, '.']
 
     for inc in include
-      grepArr.push "--include=#{inc}"
+      grepArr.push "--include=./#{inc}"
 
     for exc in exclude
-      grepArr.push "--exclude=#{exc}"
+      grepArr.push "--exclude=./#{exc}"
 
     potentialDead = []
 
