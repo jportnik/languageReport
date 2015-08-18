@@ -4,7 +4,7 @@ module.exports = (grunt) ->
 
     CSON = require 'cson'
 
-    #valid options
+    # valid options
     doSep = grunt.option 'sep'
     doZip = grunt.option 'zip'
 
@@ -48,7 +48,7 @@ module.exports = (grunt) ->
         expand obj, keys, i
 
     results = (doZip, doSep, dest) ->
-      # #print out result
+      # # print out result
       # console.log '---------- nullTranslations -----------'
       # console.log JSON.stringify langObj, null, 2
       # console.log '---------------------------------------'
@@ -58,7 +58,7 @@ module.exports = (grunt) ->
         JSZip = require 'jszip'
 
         zip = new JSZip
-        #create seperate files
+        # create seperate files
         for language of langObj
           sourceCode = 'module.exports =\n' + CSON.stringify langObj[language]
           if doSep
@@ -66,10 +66,10 @@ module.exports = (grunt) ->
           else
             zip.file "#{language}_nullTranslations.coffee", sourceCode
 
-        #create the zip file
+        # create the zip file
         if doZip
           console.log 'generating zip file'
-          #compression level: 1-9
+          # compression level: 1-9
           content = zip.generate {type:'nodeBuffer', compressionOptions: {level: 9}}
           grunt.file.write "#{dest}nullTranslations.zip", content
 

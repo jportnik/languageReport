@@ -10,6 +10,7 @@ module.exports = (grunt) ->
         ]
         langs: ['en', 'fr', 'es', 'it', 'pt', 'ru', 'te', 'zh']
         master: 'en'
+
     verify:
       verf:
         master: 'client/assets/strings/en/str.coffee'
@@ -21,6 +22,17 @@ module.exports = (grunt) ->
           'client/assets/**'
           'client/config/**'
           'client/vendor/** '
+        ]
+
+    import:
+      imp:
+        trans: '../Translations/*.coffee'
+        files: [
+          expand: true
+          cwd: '../client/assets/strings'
+          src: '**/str.coffee'
+          # change to same as cwd if you want to overwrite existing files
+          dest: '../tmpDir/'
         ]
 
   #Load tasks folder
