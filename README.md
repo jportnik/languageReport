@@ -60,9 +60,11 @@ verify:
 
 ## The "import" task
 ```shell
-grunt import
+grunt import -<options>
+where option can be
+q: quiet, silences warnings
 ```
-imports new translations and combines with an existing string file and outputing to given destination
+imports new translations and combines with an existing string file and outputting to given destination
 ```coffeescript
 import:
   imp:

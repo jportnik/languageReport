@@ -1,13 +1,25 @@
 module.exports = (grunt) ->
-  grunt.registerMultiTask 'import', 'imports new translations and combines with an existing string file and outputing to given destination', ->
+  grunt.registerMultiTask 'import', 'imports new translations and combines with an existing string file then outputs to given destination', ->
     CSON = require 'cson'
     extend = require 'extend'
     transArr = grunt.file.expand @data.trans
+    # -q to suppress errors
+    quiet = grunt.option 'q'
     # used so that @ can be accessed correctly below
     config = @
 
     # change this flag to get more information during run time
     DEV = false
+
+
+    # get master language
+    mastObj = {}
+    for file in config.files
+      if ~(file.src[0]).indexOf "/#{@data.master}/"
+        mastObj = CSON.requireCSFile file.src[0]
+        dest = file.dest
+        flag = 0
+        break
 
     transArr.forEach (trans) ->
       imported = grunt.file.read trans
@@ -27,9 +39,8 @@ module.exports = (grunt) ->
       grunt.fail.fatal "The language: #{language} file doesn't exist" if flag
 
       # 0 = parsing through object key
-      # 1 = after looking for start of string after ':'
-      # 2 = parsing the value string or inline property ex. ('name': 'first': 'jack')
-      # 3 = set newStr to 0 and skip to true
+      # 1 = looking for start of string after ':'
+      # 2 = parsing the value string or inline property
       newStr = 0
       importHandled = ''
       currentSpaces = 0
@@ -179,7 +190,25 @@ module.exports = (grunt) ->
       if imported.code?
         grunt.fail.fatal 'there is a problem with the importers handling\n' + imported
 
-      extend true, langObj, imported[language]
+      # compare this file to master file to check for accidental new keys
+      error = false
+      traverse  = (obj, mast) ->
+        for key,property of obj
+          if typeof property is 'object'
+            if mast[key]?
+              traverse property, mast[key]
+            else
+              grunt.log.warn "#{key} doesn't seem to exist." unless quiet
+              error = true
+          else
+            if not mast[key]?
+              grunt.log.warn "#{key} doesn't seem to exist." unless quiet
+              error = true
 
-      sourceCode = 'module.exports =\n' + CSON.stringify langObj
-      grunt.file.write dest, sourceCode
+      traverse imported[language], mastObj
+
+      if not error or config.createOnWarn
+        extend true, langObj, imported[language]
+
+        sourceCode = 'module.exports =\n' + CSON.stringify langObj
+        grunt.file.write dest, sourceCode

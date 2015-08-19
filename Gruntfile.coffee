@@ -26,6 +26,8 @@ module.exports = (grunt) ->
 
     import:
       imp:
+        createOnWarn: true
+        master: 'en'
         trans: '../Translations/*.coffee'
         files: [
           expand: true
