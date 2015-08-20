@@ -60,6 +60,11 @@ module.exports = (grunt) ->
         zip = new JSZip
         # create seperate files
         for language of langObj
+          i=0
+          for property of langObj[language]
+            i++
+          if i
+            grunt.log.warn "missing files found check the output files"
           sourceCode = 'module.exports =\n' + CSON.stringify langObj[language]
           if doSep
             grunt.file.write "#{dest}seperate/#{language}_nullTranslations.coffee", sourceCode
@@ -74,6 +79,13 @@ module.exports = (grunt) ->
           grunt.file.write "#{dest}nullTranslations.zip", content
 
       else
+        for language of langObj
+          i=0
+          for property of langObj[language]
+            i++
+          if i
+            grunt.log.warn "missing files found check the output files"
+            break
         sourceCode = 'module.exports =\n' + CSON.stringify langObj
         grunt.file.write "#{dest}combined_nullTranslations.coffee", sourceCode
 

@@ -4,7 +4,7 @@ module.exports = (grunt) ->
       lang:
         files: [
           expand: true
-          cwd: 'client/assets/strings'
+          cwd: '../client/assets/strings'
           dest: 'tmpDir/'
           src: '**/str.coffee'
         ]

@@ -188,7 +188,7 @@ module.exports = (grunt) ->
 
       # NOTE: if code is a property of a valid obj this will still fire
       if imported.code?
-        grunt.fail.fatal 'there is a problem with the importers handling\n' + imported
+        grunt.fail.fatal "there is a problem with the importers handling\n#{imported}"
 
       # compare this file to master file to check for accidental new keys
       error = false
@@ -198,11 +198,11 @@ module.exports = (grunt) ->
             if mast[key]?
               traverse property, mast[key]
             else
-              grunt.log.warn "#{key} doesn't seem to exist." unless quiet
+              grunt.log.warn "#{key} doesn't seem to exist, from #{language}." unless quiet
               error = true
           else
             if not mast[key]?
-              grunt.log.warn "#{key} doesn't seem to exist." unless quiet
+              grunt.log.warn "#{key} doesn't seem to exist, from #{language}" unless quiet
               error = true
 
       traverse imported[language], mastObj
