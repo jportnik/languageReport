@@ -1,16 +1,15 @@
 module.exports = (grunt) ->
-  grunt.registerMultiTask 'verify', 'finds potential unused strings', ->
+  grunt.registerMultiTask 'verify', 'finds potential unused strings\n**WARNING**\npotential is the key word here, always check before removing', ->
     start = Date.now()
 
     CSON = require 'cson'
-    sync = require 'child_process'
+    cp = require 'child_process'
 
-    mastObj = CSON.requireCSFile @data.master
+    masterLanguageObj = CSON.requireCSFile @data.master
     include = @data.include
     exclude = @data.exclude
-    toSearch = @data.toSearch
 
-    grepArr = ['-r', null, '.']
+    grepArr = ['-r','-o', null, '.']
 
     for inc in include
       grepArr.push "--include=./#{inc}"
@@ -18,27 +17,32 @@ module.exports = (grunt) ->
     for exc in exclude
       grepArr.push "--exclude=./#{exc}"
 
-    potentialDead = []
+    flattenedPaths = []
 
     traverse = (obj, soFar) ->
-      for property of obj
+      for key of obj
         flat = null
         if soFar is ''
-          flat = property
+          flat = key
         else
-          flat = "#{soFar}.#{property}"
-        if typeof obj[property] isnt 'object' or not obj[property]?
-          # console.log "looking for: flat"
-          grepArr[1] = flat
-          grep = sync.spawnSync 'grep', grepArr
-          switch grep.status
-            when 1 then potentialDead.push flat
-            when 2 then console.log 'an error occured with grep'
-            else
-        else if typeof obj[property] is 'object'
-          traverse obj[property], flat
+          flat = "#{soFar}.#{key}"
+        if typeof obj[key] isnt 'object' or not obj[key]?
+          flattenedPaths.push flat
+        else if typeof obj[key] is 'object'
+          traverse obj[key], flat
 
-    traverse mastObj, ''
+    # create a flattened array of all the objects keys
+    traverse masterLanguageObj, ''
 
-    console.log potentialDead
-    console.log 'time: ' + (Date.now() - start)
+    grepPattern = flattenedPaths.join '\\|'
+    grepArr[2] = "\'#{grepPattern}\'"
+    grepOutputObj = cp.spawnSync 'grep', grepArr, {encoding: 'utf8'}
+
+    # out is a string with FOUND keys
+    out = grepOutputObj.stdout
+
+    # check for keys that were not found
+    for str in flattenedPaths
+      if out.indexOf(str) is -1
+        grunt.log.writeln str
+    grunt.log.writeln 'time: ' + (Date.now() - start)

@@ -11,100 +11,85 @@ module.exports = (grunt) ->
     languages = @data.langs
     master = @data.master
     filesObj = {}
-    langObj = {}
 
-    i = 0
+    noTranslationLanguageObj = {}
+    linefeed = grunt.util.linefeed
+
+    # gets destinations
+    destinations = []
+    for key of @data.files
+      destinations.push key.dest
+
+    filesRead = 0
     @files.forEach (file) ->
-      i++
-      for language in languages
-        if ~(file.src[0]).indexOf "/#{language}/"
-          filesObj[language] = CSON.requireCSFile file.src[0]
-          break
+      for path in file.src
+        filesRead++
+        for language in languages
+          if (path.indexOf "/#{language}/") > -1
+            filesObj[language] = CSON.requireCSFile path
+            break
 
-    if not i
+    if filesRead is 0
       grunt.fail.fatal "0 files found."
     else
-      console.log "#{i} file(s) found."
+      grunt.log.writeln "#{filesRead} file(s) found."
 
     traverse = (obj, path, callback) ->
-      for property of obj
-        if typeof obj[property] is 'object' and obj[property] isnt null
-          subObj = obj[property]
-          p = path.concat '.' + property
+      for key of obj
+        if typeof obj[key] is 'object' and obj[key] isnt null
+          subObj = obj[key]
+          p = path.concat '.' + key
           traverse subObj, p, callback
         else
-          p = path + '.' + property
-          callback p, obj[property]
+          p = path + '.' + key
+          callback p, obj[key]
 
-    parseDotNotation = (obj, str) ->
+    updateLangObj = (obj, str) ->
+      # split apart flattened key
       keys = str.split '.'
-      expand obj, keys, 0
 
-    expand = (obj, keys, i) ->
-      if i < keys.length
+      # check if key exist and create it if it doesn't
+      for i in [0..keys.length] by 1
         obj[keys[i]] = {} if obj[keys[i]] is undefined
         obj = obj[keys[i]]
-        i++
-        expand obj, keys, i
 
-    results = (doZip, doSep, dest) ->
-      # # print out result
-      # console.log '---------- nullTranslations -----------'
-      # console.log JSON.stringify langObj, null, 2
-      # console.log '---------------------------------------'
+    strFlattened = {}
 
-      #save result in files
-      if doZip or doSep
-        JSZip = require 'jszip'
+    for language in languages
+      grunt.log.writeln "#{language} checked"
+      traverse filesObj[language] , '', (name, property) ->
+        strFlattened[language] = {} if strFlattened[language] is undefined
+        strFlattened[language][name] = property
 
-        zip = new JSZip
-        # create seperate files
-        for language of langObj
-          i=0
-          for property of langObj[language]
-            i++
-          if i
-            grunt.log.warn "missing files found check the output files"
-          sourceCode = 'module.exports =\n' + CSON.stringify langObj[language]
-          if doSep
-            grunt.file.write "#{dest}seperate/#{language}_nullTranslations.coffee", sourceCode
-          else
-            zip.file "#{language}_nullTranslations.coffee", sourceCode
-
-        # create the zip file
-        if doZip
-          console.log 'generating zip file'
-          # compression level: 1-9
-          content = zip.generate {type:'nodeBuffer', compressionOptions: {level: 9}}
-          grunt.file.write "#{dest}nullTranslations.zip", content
-
-      else
-        for language of langObj
-          i=0
-          for property of langObj[language]
-            i++
-          if i
-            grunt.log.warn "missing files found check the output files"
-            break
-        sourceCode = 'module.exports =\n' + CSON.stringify langObj
-        grunt.file.write "#{dest}combined_nullTranslations.coffee", sourceCode
-
-    run = () ->
-      console.log 'running...'
-
-      strFlattened = {}
-
+    for key of strFlattened[master]
       for language in languages
-        console.log "#{language} checked"
-        traverse filesObj[language] , '', (name, property) ->
-          strFlattened[language] = {} if strFlattened[language] is undefined
-          strFlattened[language][name] = property
+        continue if language is master
+        if not strFlattened[language][key]?
+          updateLangObj(noTranslationLanguageObj, language + key)
 
-      for key of strFlattened[master]
-        for language in languages
-          continue if language is master
-          parseDotNotation langObj, language + key if not strFlattened[language][key]?
+    dest =  @files[0].orig.dest
 
-    run()
+    writeFile = (objToWrite, fileName) ->
+      empty = true
 
-    results(doZip, doSep, @files[0].orig.dest)
+      # checks is the output file(s) are empty
+      while empty
+        for key of noTranslationLanguageObj
+          for property of noTranslationLanguageObj[language]
+            empty = false
+        sourceCode = "module.exports =#{linefeed}" + CSON.stringify objToWrite
+        grunt.file.write fileName, sourceCode
+      grunt.log.warn "missing translations found check the output files" if not empty
+
+    zip = () ->
+      cp = require 'child_process'
+      # can use a library if wanted
+      zip = cp.spawnSync 'zip', ['-r', 'nullTranslations.zip', dest]
+
+    if doSep
+      writeFile(noTranslationLanguageObj[language], "#{dest}#{language}_nullTranslations.coffee")
+    else if doZip
+      seperate()
+      zip()
+    else
+      writeFile(noTranslationLanguageObj, "#{dest}combined_nullTranslations.coffee")

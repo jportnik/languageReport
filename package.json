@@ -1,7 +1,7 @@
 {
   "name": "lang-rep",
-  "description": "Language report plugin",
-  "version": "0.5.5",
+  "description": "Language report, utilities plugin",
+  "version": "0.5.10",
   "author": {
     "name": "Jack Maloney",
     "email": "jmaloney@axonify.com"

@@ -4,7 +4,7 @@ module.exports = (grunt) ->
       lang:
         files: [
           expand: true
-          cwd: '../client/assets/strings'
+          cwd: './strings'
           dest: 'tmpDir/'
           src: '**/str.coffee'
         ]
@@ -13,7 +13,7 @@ module.exports = (grunt) ->
 
     verify:
       verf:
-        master: 'client/assets/strings/en/str.coffee'
+        master: './strings/en/str.coffee'
         include: [
           'client/**/*.coffee'
           'client/**/*.html'
@@ -26,15 +26,14 @@ module.exports = (grunt) ->
 
     import:
       imp:
-        createOnWarn: true
         master: 'en'
         trans: '../Translations/*.coffee'
         files: [
           expand: true
-          cwd: '../client/assets/strings'
+          cwd: './strings'
           src: '**/str.coffee'
           # change to same as cwd if you want to overwrite existing files
-          dest: '../tmpDir/'
+          dest: './tmpDir/'
         ]
 
   #Load tasks folder
