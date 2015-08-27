@@ -15,13 +15,13 @@ module.exports = (grunt) ->
       verf:
         master: './strings/en/str.coffee'
         include: [
-          'client/**/*.coffee'
-          'client/**/*.html'
+          'strings/**/*.coffee'
+          'strings/**/*.html'
         ]
         exclude: [
-          'client/assets/**'
-          'client/config/**'
-          'client/vendor/** '
+          'strings/assets/**'
+          'strings/config/**'
+          'strings/vendor/**'
         ]
 
     import:

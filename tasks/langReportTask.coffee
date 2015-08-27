@@ -77,8 +77,8 @@ module.exports = (grunt) ->
         for key of noTranslationLanguageObj
           for property of noTranslationLanguageObj[language]
             empty = false
-        sourceCode = "module.exports =#{linefeed}" + CSON.stringify objToWrite
-        grunt.file.write fileName, sourceCode
+      sourceCode = "module.exports =#{linefeed}" + CSON.stringify objToWrite
+      grunt.file.write fileName, sourceCode
       grunt.log.warn "missing translations found check the output files" if not empty
 
     zip = () ->

@@ -9,7 +9,7 @@ module.exports = (grunt) ->
     include = @data.include
     exclude = @data.exclude
 
-    grepArr = ['-r','-o', null, '.']
+    grepArr = ['-r','-o', '--file=keys.txt', '.']
 
     for inc in include
       grepArr.push "--include=./#{inc}"
@@ -34,9 +34,13 @@ module.exports = (grunt) ->
     # create a flattened array of all the objects keys
     traverse masterLanguageObj, ''
 
-    grepPattern = flattenedPaths.join '\\|'
-    grepArr[2] = "\'#{grepPattern}\'"
+    sourceCode = flattenedPaths.join '\n'
+    grunt.file.write 'keys.txt', sourceCode
+
     grepOutputObj = cp.spawnSync 'grep', grepArr, {encoding: 'utf8'}
+
+    if grepOutputObj.status > 1
+      grunt.fail.fatal grepOutputObj
 
     # out is a string with FOUND keys
     out = grepOutputObj.stdout
@@ -45,4 +49,6 @@ module.exports = (grunt) ->
     for str in flattenedPaths
       if out.indexOf(str) is -1
         grunt.log.writeln str
+
+    grunt.file.delete 'keys.txt'
     grunt.log.writeln 'time: ' + (Date.now() - start)
