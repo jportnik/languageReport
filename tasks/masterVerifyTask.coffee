@@ -4,12 +4,15 @@ module.exports = (grunt) ->
 
     CSON = require 'cson'
     cp = require 'child_process'
+    os = require 'os'
+    fs = require 'fs'
+    tmp = os.tmpdir()
 
     masterLanguageObj = CSON.requireCSFile @data.master
     include = @data.include
     exclude = @data.exclude
 
-    grepArr = ['-r','-o', '--file=keys.txt', '.']
+    grepArr = ['-r','-o', "--file=#{tmp}keys.txt", '.']
 
     for inc in include
       grepArr.push "--include=./#{inc}"
@@ -35,12 +38,12 @@ module.exports = (grunt) ->
     traverse masterLanguageObj, ''
 
     sourceCode = flattenedPaths.join '\n'
-    grunt.file.write 'keys.txt', sourceCode
+    grunt.file.write "#{tmp}keys.txt", sourceCode
 
     grepOutputObj = cp.spawnSync 'grep', grepArr, {encoding: 'utf8'}
 
     if grepOutputObj.status > 1
-      grunt.fail.fatal grepOutputObj
+      grunt.fail.fatal CSON.stringify grepOutputObj
 
     # out is a string with FOUND keys
     out = grepOutputObj.stdout
@@ -50,5 +53,5 @@ module.exports = (grunt) ->
       if out.indexOf(str) is -1
         grunt.log.writeln str
 
-    grunt.file.delete 'keys.txt'
+    fs.unlinkSync "#{tmp}keys.txt"
     grunt.log.writeln 'time: ' + (Date.now() - start)

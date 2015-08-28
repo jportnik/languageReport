@@ -18,13 +18,15 @@ grunt.loadNpmTasks('lang-rep');
 ```
 
 ## The "langRep" task
+Will check language files and compare them to a 'master' language outputting the keys that do not have a translations in the non-master files
 ```shell
 grunt langRep -<options>
 ```
-where options is zip or sep  
-zip: zips a the separate files  
-sep: separates the output by language (each file is a different language)
-
+#### Options
+#### -sep
+Separates the output files of the langRep task into separate files, where each file is a different language
+#### -zip
+Like the separate option but also then zips the separate files into a zip file
 ```coffeescript
 langRep:
   lang:
@@ -59,12 +61,15 @@ verify:
 ```
 
 ## The "import" task
+imports new translations and combines with an existing string file and outputting to given
 ```shell
 grunt import -<options>
-where option can be
-q: quiet, silences warnings
 ```
-imports new translations and combines with an existing string file and outputting to given destination
+#### Options
+#### -q
+silences all warning
+#### -f
+forced past non-existant string error, for creating files even if an perceived error occurred
 ```coffeescript
 import:
   imp:
