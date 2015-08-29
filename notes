@@ -17,3 +17,5 @@ GREP
 prune strings or 'regen'
 cwd option
 language list options
+
+test notes
