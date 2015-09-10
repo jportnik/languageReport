@@ -86,8 +86,13 @@ module.exports = (grunt) ->
       # can use a library if wanted
       zip = cp.spawnSync 'zip', ['-r', 'nullTranslations.zip', dest]
 
+    seperate = () ->
+      for language in languages
+        continue if language is master
+        writeFile(noTranslationLanguageObj[language], "#{dest}#{language}_nullTranslations.coffee")
+
     if doSep
-      writeFile(noTranslationLanguageObj[language], "#{dest}#{language}_nullTranslations.coffee")
+      seperate()
     else if doZip
       seperate()
       zip()
